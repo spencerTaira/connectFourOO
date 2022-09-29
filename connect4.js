@@ -8,12 +8,15 @@
  */
 
 class ConnectFourGame {
-  constructor(height = 6, width = 7, board = [], currPlayer = 1) {
+  constructor(height = 6, width = 7) {
     this.height = height;
     this.width = width;
-    this.board = board;
-    this.currPlayer = currPlayer;
+    this.board = [];
+    this.currPlayer = 1;
+    this.makeBoard();
+    this.makeHtmlBoard();
   }
+
   makeBoard() {
     for (let y = 0; y < this.height; y++) {
       this.board.push(Array.from({ length: this.width }));
@@ -103,11 +106,11 @@ class ConnectFourGame {
 
 
   checkForWin() {
-    function _win(cells) {
+    const _win = (cells) => {
       // Check four cells to see if they're all color of current player
       //  - cells: list of four (y, x) cells
       //  - returns true if all are legal coordinates & all match currPlayer
-
+      console.log("this inside _win", this);
       return cells.every(
         ([y, x]) =>
           y >= 0 &&
@@ -116,9 +119,9 @@ class ConnectFourGame {
           x < this.width &&
           this.board[y][x] === this.currPlayer
       );
-    }
+    };
 
-    const _winThis = _win.bind(this);
+    // const _winThis = _win.bind(this);
 
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
@@ -130,7 +133,7 @@ class ConnectFourGame {
         const diagDL = [[y, x], [y + 1, x - 1], [y + 2, x - 2], [y + 3, x - 3]];
 
         // find winner (only checking each win-possibility as needed)
-        if (_winThis(horiz) || _winThis(vert) || _winThis(diagDR) || _winThis(diagDL)) {
+        if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
           return true;
         }
       }
@@ -301,5 +304,5 @@ class ConnectFourGame {
 // makeBoard();
 // makeHtmlBoard();
 const newGame = new ConnectFourGame();
-newGame.makeBoard();
-newGame.makeHtmlBoard();
+// newGame.makeBoard();
+// newGame.makeHtmlBoard();
