@@ -7,12 +7,27 @@
  * board fills (tie)
  */
 
+class Player {
+  constructor(playerColor, playerNumber) {
+    this.playerColor = playerColor;
+    this.playerNumber = playerNumber;
+    console.log(`player ${this.playerNumber} ${this.playerColor}`);
+  }
+
+
+}
+
+
 class ConnectFourGame {
-  constructor(height = 6, width = 7) {
+  constructor(playerOneColor = "red", playerTwoColor = "blue", height = 6, width = 7) {
     this.height = height;
     this.width = width;
     this.board = [];
-    this.currPlayer = 1;
+    this.playerOneColor = playerOneColor;
+    this.playerTwoColor = playerTwoColor;
+    this.playerOne = new Player(this.playerOneColor, 1);
+    this.playerTwo = new Player(this.playerTwoColor, 2);
+    this.currPlayer = this.playerOne;
     this.makeBoard();
     this.makeHtmlBoard();
     this.gameOver = false;
@@ -66,7 +81,9 @@ class ConnectFourGame {
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currPlayer}`);
+    // piece.classList.add(`p${this.currPlayer}`);
+    piece.style.backgroundColor = this.currPlayer.playerColor;
+
     piece.style.top = -50 * (y + 2);
 
     const spot = document.getElementById(`${y}-${x}`);
@@ -81,7 +98,7 @@ class ConnectFourGame {
     if (this.gameOver === true) {
       return;
     }
-    
+
     // get x from ID of clicked cell
     const x = +evt.target.id;
 
@@ -92,13 +109,14 @@ class ConnectFourGame {
     }
 
     // place piece in board and add to HTML table
-    this.board[y][x] = this.currPlayer;
+    this.board[y][x] = this.currPlayer.playerNumber;
+    console.log(this.currPlayer);
     this.placeInTable(y, x);
 
     // check for win
     if (this.checkForWin()) {
       this.gameOver = true;
-      return this.endGame(`Player ${this.currPlayer} won!`);
+      return this.endGame(`Player ${this.currPlayer.playerNumber} won!`);
     }
 
     // check for tie
@@ -108,7 +126,7 @@ class ConnectFourGame {
     }
 
     // switch players
-    this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+    this.currPlayer = this.currPlayer === this.playerOne ? this.playerTwo : this.playerOne;
   }
 
 
@@ -123,7 +141,7 @@ class ConnectFourGame {
           y < this.height &&
           x >= 0 &&
           x < this.width &&
-          this.board[y][x] === this.currPlayer
+          this.board[y][x] === this.currPlayer.playerNumber
       );
     };
 
@@ -148,18 +166,23 @@ class ConnectFourGame {
 }
 
 const startButton = document.querySelector('#start');
-startButton.addEventListener('click', start)
+startButton.addEventListener('click', start);
 
 function start() {
   const boardHTML = document.querySelector('#board');
   const tr = document.querySelectorAll('tr');
   if (tr.length === 0) {
-    console.log('run');
-    const newGame = new ConnectFourGame();
+    const playerOneInput = document.getElementById('player-one-color');
+    const playerTwoInput = document.getElementById('player-two-color');
+    const playerOneColor = playerOneInput.value;
+    const playerTwoColor = playerTwoInput.value;
+    console.log(`run ${playerOneColor} ${playerTwoColor}`);
+    const newGame = new ConnectFourGame(playerOneColor, playerTwoColor);
+
   } else {
     for (let i = 0; i < tr.length; i++) {
       boardHTML.removeChild(tr[i]);
       console.log('after remove', tr);
     }
   }
-}
+};
